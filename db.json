@@ -3180,7 +3180,7 @@
     {
       "id": "455",
       "title": "Що таке Database trigger?",
-      "body": "Trigger — автоматична процедура, що запускається при подіях у БД (INSERT, UPDATE). Наприклад, логування змін: `CREATE TRIGGER log_update AFTER UPDATE ON users ...`."
+      "body": "Trigger — автоматична процедура, що запускається при подіях у БД (INSERT, UPDATE). Наприклад, логування змін: `CREATE TRIGGER log_update AFTER UPDATE ON users ...`.",
       "rank": "Senior",
       "category": "Databases"
     },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { Question } from "@/app/types";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -14,12 +14,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import { redirect, RedirectType } from 'next/navigation'
 import { Box } from "@mui/system";
+import Pagination from '@mui/material/Pagination';
 
 export default function Home() {
-    const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  async function fetchQuestions() {
-    const res = await fetch('http://localhost:4000/questions');
+  async function fetchQuestions(page: number = 1) {
+    const res = await fetch(`http://localhost:4000/questions?_page=${page}&_per_page=10`);
     if (!res.ok) {
       throw new Error('Failed to fetch questions');
     }
@@ -40,10 +43,16 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchQuestions().then((data) => {
-      setQuestions(data);
+    fetchQuestions(currentPage).then((response) => {
+      setTotalPages(response.pages);
+      setQuestions(response.data);
     });
-  }, []);
+  }, [currentPage]);
+
+  const handlePageChanging = (event: BaseSyntheticEvent) => {
+    setCurrentPage(event.target.innerText);
+    redirect(`http://localhost:3000?page=${event.target.innerText}`);
+  }
 
     return (
       <div>
@@ -69,6 +78,7 @@ export default function Home() {
               </IconButton>
             </Box>
         )) }
+        <Pagination count={totalPages} color="primary" onChange={handlePageChanging} />
       </div>
           <Fab color="primary" aria-label="add"
                sx={{ position: 'fixed', bottom: 20, right: 20 }}
