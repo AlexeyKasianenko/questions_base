@@ -15,11 +15,14 @@ import IconButton from '@mui/material/IconButton';
 import { redirect, RedirectType } from 'next/navigation'
 import { Box } from "@mui/system";
 import Pagination from '@mui/material/Pagination';
+import ReactMarkdown from 'react-markdown';
+import { useSearchParams } from 'next/navigation'
 
 export default function Home() {
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const searchParams = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") || '1');
 
   async function fetchQuestions(page: number = 1) {
     const res = await fetch(`http://localhost:4000/questions?_page=${page}&_per_page=10`);
@@ -50,7 +53,6 @@ export default function Home() {
   }, [currentPage]);
 
   const handlePageChanging = (event: BaseSyntheticEvent) => {
-    setCurrentPage(event.target.innerText);
     redirect(`http://localhost:3000?page=${event.target.innerText}`);
   }
 
@@ -67,7 +69,9 @@ export default function Home() {
                 <Typography component="h2" sx={{ fontWeight: 'bold' }}>{ question.title }</Typography>
               </AccordionSummary>
               <AccordionDetails>
+                <ReactMarkdown>
                 { question.body }
+                </ReactMarkdown>
               </AccordionDetails>
             </Accordion>
               <IconButton aria-label="edit" onClick={() => redirect(`/question/${question.id}`, RedirectType.push)}>
@@ -78,7 +82,7 @@ export default function Home() {
               </IconButton>
             </Box>
         )) }
-        <Pagination count={totalPages} color="primary" onChange={handlePageChanging} />
+        <Pagination count={totalPages} page={currentPage} color="primary" onChange={handlePageChanging} />
       </div>
           <Fab color="primary" aria-label="add"
                sx={{ position: 'fixed', bottom: 20, right: 20 }}
