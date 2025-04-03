@@ -25,7 +25,7 @@ export default function Home() {
   const currentPage = parseInt(searchParams.get("page") || '1');
 
   async function fetchQuestions(page: number = 1) {
-    const res = await fetch(`http://localhost:4000/questions?_page=${page}&_per_page=10`);
+    const res = await fetch(`/api/questions?_page=${page}`);
     if (!res.ok) {
       throw new Error('Failed to fetch questions');
     }
@@ -36,7 +36,7 @@ export default function Home() {
     if(!confirm('Are you sure you want to delete this question?')) {
         return;
     }
-    const res = await fetch(`http://localhost:4000/questions/${id}`, {
+    const res = await fetch(`/api/questions/${id}`, {
       method: 'DELETE',
     });
 
@@ -61,19 +61,19 @@ export default function Home() {
       <div className="container mx-auto mt-10">
         { questions.map((question: Question) => (
             <Box key={ question.id } sx={{ mb: 5 }} display="flex" alignItems="center">
-            <Accordion sx={{ width: '100%' }}>
-              <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header">
-                <Typography component="h2" sx={{ fontWeight: 'bold' }}>{ question.title }</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <ReactMarkdown>
-                { question.body }
-                </ReactMarkdown>
-              </AccordionDetails>
-            </Accordion>
+              <Accordion sx={{ width: '100%' }}>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header">
+                  <Typography component="h2" sx={{ fontWeight: 'bold' }}>{ question.title }</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <ReactMarkdown>
+                  { question.body }
+                  </ReactMarkdown>
+                </AccordionDetails>
+              </Accordion>
               <IconButton aria-label="edit" onClick={() => redirect(`/question/${question.id}`, RedirectType.push)}>
                 <EditIcon />
               </IconButton>
@@ -86,7 +86,7 @@ export default function Home() {
       </div>
           <Fab color="primary" aria-label="add"
                sx={{ position: 'fixed', bottom: 20, right: 20 }}
-               onClick={() => redirect('/question/new', RedirectType.push)} >
+               onClick={() => redirect('/question/0', RedirectType.push)} >
               <AddIcon />
           </Fab>
       </div>
