@@ -1,7 +1,7 @@
 'use client';
 
-import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { Question } from "@/app/types";
+import {BaseSyntheticEvent, useEffect, useState} from "react";
+import {Question} from "@/app/types";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -12,11 +12,13 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import { redirect, RedirectType } from 'next/navigation'
-import { Box } from "@mui/system";
+import {redirect, RedirectType} from 'next/navigation'
+import {Box} from "@mui/system";
 import Pagination from '@mui/material/Pagination';
 import ReactMarkdown from 'react-markdown';
-import { useSearchParams } from 'next/navigation'
+import {useSearchParams} from 'next/navigation'
+import {RankBadge} from "@/app/components/rank-badge";
+import {CategoryBadge} from "@/app/components/category-badge";
 
 export default function Home() {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -33,8 +35,8 @@ export default function Home() {
   }
 
   const handleDeleteQuestion = async (id: number) => {
-    if(!confirm('Are you sure you want to delete this question?')) {
-        return;
+    if (!confirm('Are you sure you want to delete this question?')) {
+      return;
     }
     const res = await fetch(`/api/questions/${id}`, {
       method: 'DELETE',
@@ -56,39 +58,48 @@ export default function Home() {
     redirect(`http://localhost:3000?page=${event.target.innerText}`);
   }
 
-    return (
-      <div>
+  return (
+    <div>
       <div className="container mx-auto mt-10">
-        { questions.map((question: Question) => (
-            <Box key={ question.id } sx={{ mb: 5 }} display="flex" alignItems="center">
-              <Accordion sx={{ width: '100%' }}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1-content"
-                    id="panel1-header">
-                  <Typography component="h2" sx={{ fontWeight: 'bold' }}>{ question.title }</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <ReactMarkdown>
-                  { question.body }
-                  </ReactMarkdown>
-                </AccordionDetails>
-              </Accordion>
-              <IconButton aria-label="edit" onClick={() => redirect(`/question/${question.id}`, RedirectType.push)}>
-                <EditIcon />
-              </IconButton>
-              <IconButton aria-label="delete" onClick={() => handleDeleteQuestion(question.id)}>
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-        )) }
-        <Pagination count={totalPages} page={currentPage} color="primary" onChange={handlePageChanging} />
+        {questions.map((question: Question) => (
+          <Box key={question.id} sx={{mb: 5}} display="flex" alignItems="center">
+            <Accordion sx={{width: '100%'}}>
+
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon/>}
+                aria-controls="panel1-content"
+                id="panel1-header">
+                <Box>
+                  <div className="mb-5">
+                    <RankBadge rank={question.rank}/>
+                    <CategoryBadge category={question.category}/>
+                  </div>
+                  <Typography component="h2" sx={{fontWeight: 'bold'}}>
+                    {question.title}
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                <ReactMarkdown>
+                  {question.body}
+                </ReactMarkdown>
+              </AccordionDetails>
+            </Accordion>
+            <IconButton aria-label="edit" onClick={() => redirect(`/question/${question.id}`, RedirectType.push)}>
+              <EditIcon/>
+            </IconButton>
+            <IconButton aria-label="delete" onClick={() => handleDeleteQuestion(question.id)}>
+              <DeleteIcon/>
+            </IconButton>
+          </Box>
+        ))}
+        <Pagination count={totalPages} page={currentPage} color="primary" onChange={handlePageChanging}/>
       </div>
-          <Fab color="primary" aria-label="add"
-               sx={{ position: 'fixed', bottom: 20, right: 20 }}
-               onClick={() => redirect('/question/0', RedirectType.push)} >
-              <AddIcon />
-          </Fab>
-      </div>
+      <Fab color="primary" aria-label="add"
+           sx={{position: 'fixed', bottom: 20, right: 20}}
+           onClick={() => redirect('/question/0', RedirectType.push)}>
+        <AddIcon/>
+      </Fab>
+    </div>
   );
 }
