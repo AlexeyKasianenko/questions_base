@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
   const total = questions.length > 0 ? questions[0].total_questions : 0;
   const response = {
     data: questions,
-    pages: Math.ceil(total / per_page),
+    pages: Math.ceil(total / per_page) -1,
   };
 
   return NextResponse.json(response);
