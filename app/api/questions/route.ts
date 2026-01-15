@@ -4,7 +4,7 @@ import { openDb } from "../db";
 export async function GET(req: NextRequest) {
   const db = await openDb();
   const per_page = 10;
-  const page = parseInt(req.nextUrl.searchParams.get("_page") as string) | 1;
+  const page = parseInt(req.nextUrl.searchParams.get("_page") as string) || 1;
   const order = (req.nextUrl.searchParams.get("order_by") as string) || "";
   const category = req.nextUrl.searchParams.get("category") as string;
   const rank = req.nextUrl.searchParams.get("rank") as string;
